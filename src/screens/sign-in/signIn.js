@@ -20,7 +20,8 @@ const SignIn = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const onFinish = (values) => {
-    dispatch(userSignIn(values, navigate));
+    // dispatch(userSignIn(values, navigate));
+    navigate('/welcome')
   };
 
   const { loading, error } = useSelector((state) => state.signIn);

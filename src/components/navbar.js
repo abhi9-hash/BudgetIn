@@ -24,12 +24,12 @@ const Navbar = () => {
     <Row
       justify="space-between"
       align="middle"
-      className="flex flex-row justify-between items-center flex-nowrap fixed top-0 w-full p-5 shadow-md rounded-b-lg bg-white z-50"
+      className="flex flex-row justify-between items-center flex-nowrap fixed top-0 w-full p-5 shadow-md rounded-b-lg bg-white z-50 bg-opacity-70 bg-black p-10"
     >
-      <div onClick={handleBackClick} className={navItemStyle}>
+      {/* <div onClick={handleBackClick} className={navItemStyle}>
         {"<<"} Back
-      </div>
-      <div className="flex justify-center items-center flex-row w-11/12">
+      </div> */}
+      <div className="flex justify-center items-center flex-row w-full gap-5">
         <div
           onClick={() => navigate("/home")}
           className={navItemStyle}

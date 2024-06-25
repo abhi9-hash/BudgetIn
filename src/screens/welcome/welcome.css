@@ -1,0 +1,23 @@
+/* src/WelcomePage.css */
+
+.welcome-container {
+    /* @apply h-screen flex justify-center items-center bg-cover bg-center; */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background-size: cover;
+    background-position: center;
+    height: 100vh;
+    background-image: url('../../assets/images/welcome.jpg'); /* Replace with your image path */
+  }
+  
+  .welcome-content {
+    /* @apply text-center text-white bg-black bg-opacity-50 p-10 rounded-lg; */
+    text-align: center;
+    color: white;
+    background-color: black;
+    opacity:calc(0.8);
+    padding: 2rem;
+    border-radius: 50px;
+  }
+  

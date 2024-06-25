@@ -5,6 +5,7 @@ import Details from "./screens/details/details";
 import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
 import { RedirectToLogin } from "./components/redirect";
 import Home from "./screens/home/home";
+import Welcome from "./screens/welcome/welcome";
 
 function App() {
   return (
@@ -12,6 +13,7 @@ function App() {
       <Router>
         <Routes>
           <Route path="/home" element={<Home />} />
+          <Route path="/welcome" element={<Welcome />} />
           <Route path="/sign-in" element={<SignIn />} />
           <Route path="/analytics" element={<Analytics />} />
           <Route path="/search" element={<Search />} />

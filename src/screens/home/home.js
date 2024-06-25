@@ -6,7 +6,7 @@ import {
   Button,
   Form,
   Input,
-  Select,
+  // Select,
   Typography,
   Row,
   Col,
@@ -16,25 +16,30 @@ import Navbar from "../../components/navbar";
 
 const { Content } = Layout;
 const { Title } = Typography;
-const { Option } = Select;
+// const { Option } = Select;
 
 export default function Home() {
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
-  const [criteria, setCriteria] = useState("Domain");
-  const [search, setSearch] = useState("");
+  // const [criteria, setCriteria] = useState("project_name");
+  const [search, setSearch] = useState({
+    project_name: "",
+    location: "",
+    clieant_name: "",
+  });
 
   const handleClick = () => {
-    dispatch(listWorkspaces(criteria, search, navigate));
+    // dispatch(listWorkspaces(criteria, search, navigate));
+    navigate('/project-details')
   };
 
-  const handleDropdownChange = (value) => {
-    setCriteria(value);
-  };
+  // const handleDropdownChange = (value) => {
+  //   setCriteria(value);
+  // };
 
   const handleSearch = (e) => {
-    setSearch(e.target.value);
+    setSearch({ ...search, [e.target.name]: e.target.value });
   };
 
   return (
@@ -42,28 +47,49 @@ export default function Home() {
       <Navbar />
       <Content>
         <Row className="h-dvh flex flex-col">
-          <Row span={24} className=" flex flex-row justify-center items-center">
-            <Col span={12}>
+          <Row span={32} className=" flex flex-row justify-center items-center">
+            <Col span={16}>
               <Title level={3} className="text-center mt-60">
-                Search for your workspace with either Workspace Name, ID or
-                Domain
+                Search for your Project budget with either Project Name,
+                Location and Client Name
               </Title>
               <Form layout="vertical" onFinish={handleClick}>
-                <Row gutter={16} className="mt-20">
-                  <Col span={8}>
+                <Row gutter={32} className="mt-20">
+                  {/* <Col span={8}>
                     <Form.Item label="Select Option">
                       <Select value={criteria} onChange={handleDropdownChange}>
-                        <Option value="Name">Workspace Name</Option>
-                        <Option value="ID">ID</Option>
-                        <Option value="Domain">Domain</Option>
+                        <Option value="project_name">Project Name</Option>
+                        <Option value="location">Location</Option>
+                        <Option value="client_name">Client Name</Option>
                       </Select>
                     </Form.Item>
-                  </Col>
-                  <Col span={16}>
-                    <Form.Item label="Search">
+                  </Col> */}
+                  <Col span={8}>
+                    <Form.Item label="Project name">
                       <Input
-                        placeholder="Enter your value"
-                        value={search}
+                        placeholder="Enter Project name"
+                        value={search.project_name}
+                        name="project_name"
+                        onChange={handleSearch}
+                      />
+                    </Form.Item>
+                  </Col>
+                  <Col span={8}>
+                    <Form.Item label="Location">
+                      <Input
+                        placeholder="Enter location"
+                        value={search.location}
+                        name="location"
+                        onChange={handleSearch}
+                      />
+                    </Form.Item>
+                  </Col>
+                  <Col span={8}>
+                    <Form.Item label="Client name">
+                      <Input
+                        placeholder="Enter Client name"
+                        value={search.clieant_name}
+                        name="clieant_name"
                         onChange={handleSearch}
                       />
                     </Form.Item>
@@ -73,7 +99,12 @@ export default function Home() {
                   <Button
                     type="primary"
                     htmlType="submit"
-                    disabled={search === "" || criteria === ""}
+                    disabled={
+                      search.project_name === "" ||
+                      search.clieant_name === "" ||
+                      search.location === ""
+                      // criteria === ""
+                    }
                   >
                     Submit
                   </Button>
