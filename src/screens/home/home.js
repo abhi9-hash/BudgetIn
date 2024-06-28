@@ -50,7 +50,7 @@ export default function Home() {
           <Row span={32} className=" flex flex-row justify-center items-center">
             <Col span={16}>
               <Title level={3} className="text-center mt-60">
-                Search for your Project budget with either Project Name,
+                Search for your Project budget with Project Name,
                 Location and Client Name
               </Title>
               <Form layout="vertical" onFinish={handleClick}>

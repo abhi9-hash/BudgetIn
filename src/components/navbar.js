@@ -4,11 +4,6 @@ import { useNavigate } from "react-router-dom";
 
 const Navbar = () => {
   const navigate = useNavigate();
-
-  const handleBackClick = () => {
-    navigate(-1);
-  };
-
   const navItemStyle =
     "text-black font-medium text-base mx-2 cursor-pointer pb-0.5 transition-all duration-300";
 
@@ -26,9 +21,6 @@ const Navbar = () => {
       align="middle"
       className="flex flex-row justify-between items-center flex-nowrap fixed top-0 w-full p-5 shadow-md rounded-b-lg bg-white z-50 bg-opacity-70 bg-black p-10"
     >
-      {/* <div onClick={handleBackClick} className={navItemStyle}>
-        {"<<"} Back
-      </div> */}
       <div className="flex justify-center items-center flex-row w-full gap-5">
         <div
           onClick={() => navigate("/home")}
@@ -36,37 +28,15 @@ const Navbar = () => {
           onMouseEnter={handleMouseEnter}
           onMouseLeave={handleMouseLeave}
         >
-          Home
+          View/Edit Budget
         </div>
         <div
-          onClick={() =>
-            navigate("/analytics", { state: { type: "workspacesactivity" } })
-          }
+          onClick={() => navigate("/create-budget")}
           className={navItemStyle}
           onMouseEnter={handleMouseEnter}
           onMouseLeave={handleMouseLeave}
         >
-          Workspace Activity
-        </div>
-        <div
-          onClick={() =>
-            navigate("/analytics", { state: { type: "featureUsage" } })
-          }
-          className={navItemStyle}
-          onMouseEnter={handleMouseEnter}
-          onMouseLeave={handleMouseLeave}
-        >
-          Usage Statistics
-        </div>
-        <div
-          onClick={() =>
-            navigate("/analytics", { state: { type: "weeklysignups" } })
-          }
-          className={navItemStyle}
-          onMouseEnter={handleMouseEnter}
-          onMouseLeave={handleMouseLeave}
-        >
-          Weekly Signups
+          Create Budget
         </div>
       </div>
     </Row>

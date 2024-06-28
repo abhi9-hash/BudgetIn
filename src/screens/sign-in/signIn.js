@@ -13,6 +13,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import LoadingBox from "../../components/loadingBox.js";
 import ErrorBox from "../../components/errorBox.js";
+import './signIn.css'
 
 const { Title } = Typography;
 
@@ -27,13 +28,13 @@ const SignIn = () => {
   const { loading, error } = useSelector((state) => state.signIn);
 
   return (
-    <Row justify="center" align="middle" className="min-h-dvh">
+    <Row justify="center" align="middle" className="signin-container min-h-dvh">
       {loading ? (
         <LoadingBox message="Signing In" />
       ) : (
         <Col>
           {error && <ErrorBox message={error} />}
-          <Card className="w-72 p-5">
+          <Card className="signin-content w-72 p-5">
             <Title level={2} className="text-center">
               Sign In
             </Title>
@@ -49,7 +50,7 @@ const SignIn = () => {
                   { required: true, message: "Please input your Username!" },
                 ]}
               >
-                <Input placeholder="Username" className="p-2.5"/>
+                <Input placeholder="Username" className="bg-white opacity-100 p-2.5"/>
               </Form.Item>
               <Form.Item
                 name="password"
@@ -60,7 +61,7 @@ const SignIn = () => {
                 <Input
                   type="password"
                   placeholder="Password"
-                  className="p-2.5"
+                  className="bg-white opacity-100  p-2.5"
                 />
               </Form.Item>
               <Form.Item>
