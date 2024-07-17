@@ -9,20 +9,20 @@ const headerSetter = (headers) => {
 
 const dataSetter = (data, allocationMap, discountMap, type, period) => {
   const employeeData = [];
-  console.log(data);
   data.forEach((item) => {
     employeeData.push([
       item.name,
       item.designation,
       item.rate,
-      allocationMap[item.key],
+      // allocationMap[item.key],
       discountMap[item.key],
       ...Object.values(item.inputData[period]).map((i) =>
         type == "rate" ? i.workingCost : i.workingHours
       ),
-      type == "rate" ? item.total.workingCost : item.total.workingHours,
+      type == "rate" ? item.total.workingCost[period] : item.total.workingHours[period],
     ]);
   });
+  console.log(employeeData);
   return employeeData;
 };
 

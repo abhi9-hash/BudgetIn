@@ -81,6 +81,11 @@ const ProjectBudget = () => {
   const [csvData, setCsvData] = useState([]);
   const [triggerMemo, setTriggerMemo] = useState(false);
   const [labels, setLabels] = useState({});
+  const [currentTotal, setCurrentTotal] = useState({
+    weekly: 0,
+    yearly: 0,
+    monthly: 0,
+  });
   // const handleDateChange = (dates) => {
   //   const dt = JSON.parse(JSON.stringify(dates))
   //   console.log([dates,
@@ -338,6 +343,7 @@ const ProjectBudget = () => {
           (costMap["weekly"][employeeId][i] *
             (100 - discountMap[employee.id])) /
           100;
+
         if (!(i in costTotalMap["weekly"]))
           costTotalMap["weekly"][i] = Number(
             discountCostMap["weekly"][employeeId][i]
@@ -439,7 +445,9 @@ const ProjectBudget = () => {
           100;
 
         if (!(i in costTotalMap["yearly"]))
-          costTotalMap["yearly"][i] = Number(discountCostMap["yearly"][employeeId][i]);
+          costTotalMap["yearly"][i] = Number(
+            discountCostMap["yearly"][employeeId][i]
+          );
         else
           costTotalMap["yearly"][i] = (
             Number(costTotalMap["yearly"][i]) +
@@ -469,16 +477,23 @@ const ProjectBudget = () => {
           (partialSum, a) => partialSum + a.workingHours,
           0
         )
-      ).toFixed(1);
+      ).toFixed(2);
 
       const totalWorkingCost = Number(
         Object.values(yearLabels).reduce(
           (partialSum, a) => partialSum + a.workingCost,
           0
         )
-      ).toFixed(1);
+      ).toFixed(2);
 
-      console.log({ costTotalMap });
+      // console.log({ costTotalMap, discountCostMap }, Number((
+      //   Object.values(weekLabels).reduce(
+      //     (partialSum, a) => partialSum + Number(a.workingCost),
+      //     0
+      //   )
+      // ).toFixed(2)));
+
+      console.log({ yearLabels, weekLabels, monthLabels });
 
       return {
         key: employee.id,
@@ -487,8 +502,58 @@ const ProjectBudget = () => {
         rate: employee.rate,
         // utilization: employee.utilization,
         total: {
-          workingCost: totalWorkingCost,
-          workingHours: totalWorkingHours,
+          workingCost: {
+            yearly: Number(
+              Object.values(yearLabels)
+                .reduce(
+                  (partialSum, a) => partialSum + Number(a.workingCost),
+                  0
+                )
+                .toFixed(2)
+            ),
+            weekly: Number(
+              Object.values(weekLabels)
+                .reduce(
+                  (partialSum, a) => partialSum + Number(a.workingCost),
+                  0
+                )
+                .toFixed(2)
+            ),
+            monthly: Number(
+              Object.values(monthLabels)
+                .reduce(
+                  (partialSum, a) => partialSum + Number(a.workingCost),
+                  0
+                )
+                .toFixed(2)
+            ),
+          },
+          workingHours: {
+            yearly: Number(
+              Object.values(yearLabels)
+                .reduce(
+                  (partialSum, a) => partialSum + Number(a.workingHours),
+                  0
+                )
+                .toFixed(2)
+            ),
+            weekly: Number(
+              Object.values(weekLabels)
+                .reduce(
+                  (partialSum, a) => partialSum + Number(a.workingHours),
+                  0
+                )
+                .toFixed(2)
+            ),
+            monthly: Number(
+              Object.values(monthLabels)
+                .reduce(
+                  (partialSum, a) => partialSum + Number(a.workingHours),
+                  0
+                )
+                .toFixed(2)
+            ),
+          },
         },
         inputData: {
           weekly: weekLabels,
@@ -498,11 +563,32 @@ const ProjectBudget = () => {
       };
     });
     setTableData(newTableData);
-    console.log({
-      weekly: weekLabels,
-      monthly: monthLabels,
-      yearly: yearLabels,
+    setCurrentTotal({
+      ...currentTotal,
+      [period]: Number(
+        Object.values(discountCostMap[period])
+          .reduce(
+            (partialSum, a) =>
+              partialSum +
+              Number(Object.values(a).reduce((prev, b) => prev + b, 0)),
+            0
+          )
+          .toFixed(2)
+      ),
     });
+    console.log(
+      {
+        weekly: weekLabels,
+        monthly: monthLabels,
+        yearly: yearLabels,
+      },
+      Number(
+        Object.values(discountCostMap[period])
+          .reduce((partialSum, a) => partialSum + Number(a), 0)
+          .toFixed(2)
+      ),
+      discountCostMap[period]
+    );
   };
 
   const handleInputChange = (value, recordKey, dateKey) => {
@@ -837,7 +923,7 @@ const ProjectBudget = () => {
                     ))}
 
                     <TableCell key={"total" + index}>
-                      {row.total.workingCost}
+                      {row.total.workingCost[period]}
                     </TableCell>
                   </TableRow>
                 ))}
@@ -865,7 +951,22 @@ const ProjectBudget = () => {
                         {costTotalMap[period][col.title]}
                       </TableCell>
                     ))}
-                  <TableCell>{""} </TableCell>
+                  <TableCell>
+                    {currentTotal[period]}
+                    {totalCost - currentTotal[period] !== 0 &&
+                      (totalCost - currentTotal[period] > 0 ? (
+                        <Typography className="text-red-800">
+                          -{Number(totalCost - currentTotal[period]).toFixed(2)}
+                        </Typography>
+                      ) : (
+                        <Typography className="text-red-800">
+                          +
+                          {Math.abs(totalCost - currentTotal[period]).toFixed(
+                            2
+                          )}
+                        </Typography>
+                      ))}
+                  </TableCell>
                 </TableRow>
               </TableBody>
             </Table>
@@ -968,7 +1069,7 @@ const ProjectBudget = () => {
                     ))}
 
                     <TableCell key={"total" + index}>
-                      {row.total.workingHours}
+                      {row.total.workingHours[period]}
                     </TableCell>
                   </TableRow>
                 ))}
