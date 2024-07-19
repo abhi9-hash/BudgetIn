@@ -76,6 +76,7 @@ const ProjectBudget = () => {
     yearly: true,
   });
   const [discountMap, setDiscountMap] = useState({});
+  const [rateMap, setRateMap] = useState({});
   const [hoursDownload, setHoursDownload] = useState(false);
   const [budgetDownload, setBudgetDownload] = useState(false);
   const [csvData, setCsvData] = useState([]);
@@ -172,14 +173,17 @@ const ProjectBudget = () => {
     ];
     const allocationObj = {};
     const discountObj = {};
+    const rateObj = {};
     employeeList.forEach((i) => {
       allocationObj[i.id] = 100;
       discountObj[i.id] = 0;
+      rateObj[i.id] = i.rate;
     });
     console.log({ allocationObj, discountObj });
     setAllocationMap(allocationObj);
     setDiscountMap(discountObj);
     setEmployees(employeeList);
+    setRateMap(rateObj);
   }, []);
 
   const handleDateChange = () => {
@@ -246,8 +250,9 @@ const ProjectBudget = () => {
     setDiscountMap(discountObj);
   };
 
-  const handleAllocationChange = (value, empId) => {
-    setAllocationMap({ ...allocationMap, [empId]: value });
+  const handleRateChange = (value, empId) => {
+    rateMap[empId] = value
+    setRateMap({ ...rateMap, [empId]: value });
   };
 
   const handleEmployeeDiscountChange = (value, empId) => {
@@ -367,7 +372,7 @@ const ProjectBudget = () => {
         delete weekLabels[i];
         weekLabels[i] = {
           workingHours: (
-            discountCostMap["weekly"][employeeId][i] / employee.rate
+            discountCostMap["weekly"][employeeId][i] / rateMap[employee.id]
           ).toFixed(2),
           workingCost: discountCostMap["weekly"][employeeId][i],
           // (workingHours * employee.rate * (100 - discountMap[employee.id])) /
@@ -418,7 +423,7 @@ const ProjectBudget = () => {
           //   (workingHours * employee.rate * (100 - discountMap[employee.id])) /
           //   100,
           workingHours: (
-            discountCostMap["monthly"][employeeId][i] / employee.rate
+            discountCostMap["monthly"][employeeId][i] / rateMap[employee.id]
           ).toFixed(2),
           workingCost: discountCostMap["monthly"][employeeId][i],
         };
@@ -465,7 +470,7 @@ const ProjectBudget = () => {
           //   (workingHours * employee.rate * (100 - discountMap[employee.id])) /
           //   100,
           workingHours: (
-            discountCostMap["yearly"][employeeId][i] / employee.rate
+            discountCostMap["yearly"][employeeId][i] / rateMap[employee.id]
           ).toFixed(2),
           workingCost: discountCostMap["yearly"][employeeId][i],
         };
@@ -499,7 +504,7 @@ const ProjectBudget = () => {
         key: employee.id,
         name: employee.name,
         designation: employee.designation,
-        rate: employee.rate,
+        rate: rateMap[employee.id],
         // utilization: employee.utilization,
         total: {
           workingCost: {
@@ -869,7 +874,25 @@ const ProjectBudget = () => {
                   <TableRow key={index}>
                     <TableCell>{row.name}</TableCell>
                     <TableCell>{row.designation}</TableCell>
-                    <TableCell>{row.rate}</TableCell>
+                    <TableCell>
+                      {" "}
+                      <Input
+                        type="number"
+                        min={0}
+                        defaultValue={rateMap[row.key]}
+                        value={rateMap[row.key]}
+                        onChange={(e) => {
+                          handleRateChange(
+                            Number(e.target.value),
+                            row.key
+                          );
+                          handleEmployeeDiscountCostChange(
+                            Number(e.target.value),
+                            row.key
+                          );
+                        }}
+                      />
+                    </TableCell>
                     {/* <TableCell>
                       <Input
                         type="number"
@@ -1032,7 +1055,7 @@ const ProjectBudget = () => {
                   <TableRow key={index}>
                     <TableCell>{row.name}</TableCell>
                     <TableCell>{row.designation}</TableCell>
-                    <TableCell>{row.rate}</TableCell>
+                    <TableCell>{rateMap[row.key]}</TableCell>
                     {/* <TableCell>
                       <Input
                         type="number"
