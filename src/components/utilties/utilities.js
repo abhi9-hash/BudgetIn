@@ -8,6 +8,7 @@ import {
   endOfMonth,
   addDays,
   startOfMonth,
+  isWithinInterval,
 } from "date-fns";
 
 /**
@@ -37,14 +38,22 @@ export const generateLabels = (startDate, endDate) => {
   let current = startDate;
   //   startOfWeek(startDate, { weekStartsOn: 1 }); // Start week on Monday
   let weekNumber = 1;
+  let totalWorkingDays = 0;
   const weekLabels = {},
     monthLabels = {},
     yearLabels = {};
 
+  if (startDate.getDay() >= 6 && startDate.getDay() <= 7)
+    return { weekLabels, monthLabels, yearLabels, totalWorkingDays };
+
   while (current <= endDate) {
+    if (endDate.getDate() === current.getDate()) {
+      // console.log({ weekLabels, monthLabels, yearLabels });
+      break;
+    }
     const start = current;
     let end = endOfWeek(current, { weekEndsOn: 5 });
-    // console.log(current, end);
+    console.log(current, end);
 
     // Adjust end date if it exceeds the endDate
     if (end > endDate) {
@@ -71,21 +80,29 @@ export const generateLabels = (startDate, endDate) => {
     // console.log(start, end);
 
     const workingDays = calculateWorkingDays(start, end);
-    if (workingDays === 0) continue;
+    // console.log(workingDays);
+    if (workingDays === 0) {
+      delete weekLabels[weekLabel];
+      continue;
+    }
     // console.log(start, end);
     weekLabels[weekLabel].workingDays = workingDays;
+    totalWorkingDays += workingDays;
 
     // console.log(start , current, workingDays)
 
     // current = startOfWeek(addWeeks(end, 1), { weekStartsOn: 1 });
     if (end.getDate() === endOfMonth(end).getDate()) {
-      current = startOfMonth(addDays(end, 1));
+      current = startOfMonth(addDays(end, 2));
+      // console.log("goes inside1", current);
     } else {
       current = addDays(end, 1);
+      // console.log("goes inside2", current);
     }
 
     // addWeeks(end, 1); // Move to the next week
     weekNumber++;
+    // console.log({ weekNumber });
   }
 
   // if (
@@ -117,6 +134,8 @@ export const generateLabels = (startDate, endDate) => {
   // }
 
   // console.log({ weekLabels });
+
+  // console.log({ weekLabels, monthLabels, yearLabels });
 
   Object.keys(weekLabels).forEach((i) => {
     if (
@@ -151,10 +170,19 @@ export const generateLabels = (startDate, endDate) => {
       };
     }
   });
-
-  return { weekLabels, monthLabels, yearLabels };
+  // console.log({ weekLabels, monthLabels, yearLabels });
+  return { weekLabels, monthLabels, yearLabels, totalWorkingDays };
 };
 
+function isDateInFirstWeekOfMonth(date) {
+  const start = startOfMonth(date);
+  const end = endOfWeek(start, { weekStartsOn: 1 }); // assuming week starts on Monday
+  return isWithinInterval(date, { start, end });
+}
+
+function areBothDatesInFirstWeek(date1, date2) {
+  return isDateInFirstWeekOfMonth(date1) && isDateInFirstWeekOfMonth(date2);
+}
 /**
  * Calculates the number of working days (Monday to Friday) between two dates.
  *
@@ -163,8 +191,17 @@ export const generateLabels = (startDate, endDate) => {
  * @returns {number} - The number of working days.
  */
 export const calculateWorkingDays = (startDate, endDate) => {
+  // console.log({ startDate, endDate });
   let current = startDate;
   let workingDays = 0;
+  if (current.getDate() == endDate.getDate()) return 0;
+
+  if (
+    areBothDatesInFirstWeek(current, endDate) &&
+    current.getDay() >= 1 &&
+    endDate.getDay() <= 5
+  )
+    workingDays = workingDays - 1;
 
   while (current <= endDate) {
     // Check if current day is Monday to Friday and not a weekend
