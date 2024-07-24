@@ -2,12 +2,19 @@ import { CSVDownload } from "react-csv";
 
 const headerSetter = (headers) => {
   return {
-    headers: [...headers.map((i) => i.title), "Total"],
-    keys: [...headers.map((i) => i.key), "total"],
+    headers: [...headers.map((i) => i.title), "Admin Fee","Total"],
+    keys: [...headers.map((i) => i.key),"admin_fee" ,"total"],
   };
 };
 
-const dataSetter = (data, allocationMap, discountMap, type, period) => {
+const dataSetter = (
+  totalCost,
+  data,
+  allocationMap,
+  discountMap,
+  type,
+  period
+) => {
   const employeeData = [];
   data.forEach((item) => {
     employeeData.push([
@@ -19,7 +26,10 @@ const dataSetter = (data, allocationMap, discountMap, type, period) => {
       ...Object.values(item.inputData[period]).map((i) =>
         type == "rate" ? i.workingCost : i.workingHours
       ),
-      type == "rate" ? item.total.workingCost[period] : item.total.workingHours[period],
+      0.15 * totalCost,
+      type == "rate"
+        ? item.total.workingCost[period] + 0.15 * totalCost
+        : item.total.workingHours[period],
     ]);
   });
   console.log(employeeData);
@@ -27,6 +37,7 @@ const dataSetter = (data, allocationMap, discountMap, type, period) => {
 };
 
 export const HandleCsvDownload = ({
+  totalCost,
   setDownload,
   data,
   headers,
@@ -45,15 +56,21 @@ export const HandleCsvDownload = ({
   //   const [download, setDownload] = useState(false);
 
   const handleDownload = () => {
-    const dataList = dataSetter(data, allocationMap, discountMap, type, period)
-    const headerList = headerSetter(headers)
-    setCsvData([headerList.headers,...dataList])
+    const dataList = dataSetter(
+      totalCost,
+      data,
+      allocationMap,
+      discountMap,
+      type,
+      period
+    );
+    const headerList = headerSetter(headers);
+    setCsvData([headerList.headers, ...dataList]);
     setDownload(true);
     // Reset download state after a short delay to allow multiple downloads
     setTimeout(() => setDownload(false), 1000);
-    console.log([headerList.headers,...dataList])
+    console.log([headerList.headers, ...dataList]);
   };
 
-  handleDownload()
-
+  handleDownload();
 };
