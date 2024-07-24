@@ -999,6 +999,7 @@ const ProjectBudget = () => {
               type="primary"
               onClick={(e) =>
                 HandleCsvDownload({
+                  totalCost: totalCost,
                   setDownload: setBudgetDownload,
                   data: tableData,
                   allocationMap: allocationMap,
@@ -1104,6 +1105,7 @@ const ProjectBudget = () => {
               type="primary"
               onClick={(e) =>
                 HandleCsvDownload({
+                  totalCost: totalCost,
                   setDownload: setHoursDownload,
                   data: tableData,
                   allocationMap: allocationMap,
