@@ -26,9 +26,9 @@ const dataSetter = (
       ...Object.values(item.inputData[period]).map((i) =>
         type == "rate" ? i.workingCost : i.workingHours
       ),
-      0.15 * totalCost,
+      0.5 * totalCost,
       type == "rate"
-        ? item.total.workingCost[period] + 0.15 * totalCost
+        ? item.total.workingCost[period] + 0.5 * totalCost
         : item.total.workingHours[period],
     ]);
   });
