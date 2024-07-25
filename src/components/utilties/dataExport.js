@@ -2,13 +2,14 @@ import { CSVDownload } from "react-csv";
 
 const headerSetter = (headers) => {
   return {
-    headers: [...headers.map((i) => i.title), "Admin Fee","Total"],
-    keys: [...headers.map((i) => i.key),"admin_fee" ,"total"],
+    headers: [...headers.map((i) => i.title), "Admin Fee", "Total"],
+    keys: [...headers.map((i) => i.key), "admin_fee", "total"],
   };
 };
 
 const dataSetter = (
   totalCost,
+  costTotalMap,
   data,
   allocationMap,
   discountMap,
@@ -26,18 +27,29 @@ const dataSetter = (
       ...Object.values(item.inputData[period]).map((i) =>
         type == "rate" ? i.workingCost : i.workingHours
       ),
-      0.5 * totalCost,
+      0.05 * totalCost,
       type == "rate"
-        ? item.total.workingCost[period] + 0.5 * totalCost
+        ? item.total.workingCost[period] + 0.05 * totalCost
         : item.total.workingHours[period],
     ]);
   });
+  if (type == "rate")
+    employeeData.push([
+      "",
+      "",
+      "",
+      "",
+      ...Object.values(costTotalMap[period]),
+      employeeData.length * 0.05 * totalCost,
+       totalCost+employeeData.length * 0.05 *totalCost,
+    ]);
   console.log(employeeData);
   return employeeData;
 };
 
 export const HandleCsvDownload = ({
   totalCost,
+  costTotalMap,
   setDownload,
   data,
   headers,
@@ -58,6 +70,7 @@ export const HandleCsvDownload = ({
   const handleDownload = () => {
     const dataList = dataSetter(
       totalCost,
+      costTotalMap,
       data,
       allocationMap,
       discountMap,
